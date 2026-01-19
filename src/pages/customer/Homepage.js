@@ -1,9 +1,131 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../../components/shared/Header';
 import Footer from '../../components/shared/Footer';
 
 const Homepage = () => {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
+  // Dynamic menu data
+  const categories = ['All', 'Biryani & Rice', 'BBQ & Karahi', 'Desserts'];
+  
+  const menuItems = [
+    // Biryani & Rice Category
+    { 
+      name: 'Royal Chicken Biryani', 
+      price: '$14.99', 
+      category: 'Biryani & Rice',
+      description: 'Aromatic basmati rice cooked with tender chicken, saffron, and our secret spice blend.',
+      image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&h=300&fit=crop' 
+    },
+    { 
+      name: 'Vegetable Biryani', 
+      price: '$13.99', 
+      category: 'Biryani & Rice',
+      description: 'Fragrant basmati rice with mixed vegetables and aromatic spices.',
+      image: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400&h=300&fit=crop' 
+    },
+    { 
+      name: 'Mutton Biryani', 
+      price: '$16.99', 
+      category: 'Biryani & Rice',
+      description: 'Tender mutton pieces slow-cooked with fragrant basmati rice and traditional spices.',
+      image: 'https://images.unsplash.com/photo-1596797038534-9543c58d4940?w=400&h=300&fit=crop' 
+    },
+    { 
+      name: 'Chicken Pulao', 
+      price: '$12.99', 
+      category: 'Biryani & Rice',
+      description: 'Light and flavorful rice dish with tender chicken and aromatic spices.',
+      image: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=400&h=300&fit=crop' 
+    },
+    { 
+      name: 'Zeera Rice', 
+      price: '$8.99', 
+      category: 'Biryani & Rice',
+      description: 'Basmati rice flavored with cumin seeds and aromatic herbs.',
+      image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=400&h=300&fit=crop' 
+    },
+    
+    // BBQ & Karahi Category
+    { 
+      name: 'Lahori Chicken Karahi', 
+      price: '$18.50', 
+      category: 'BBQ & Karahi',
+      description: 'Tender chicken cooked in traditional karahi with authentic spices and fresh herbs.',
+      image: 'https://images.unsplash.com/photo-1589020647302-a2eac6c9c7e2?w=400&h=300&fit=crop' 
+    },
+    { 
+      name: 'Beef Seekh Kabab', 
+      price: '$12.99', 
+      category: 'BBQ & Karahi',
+      description: 'Minced beef skewers grilled to perfection with aromatic spices and herbs.',
+      image: 'https://images.unsplash.com/photo-1546833999-b9f581aeb6cd?w=400&h=300&fit=crop' 
+    },
+    { 
+      name: 'Chicken Tikka', 
+      price: '$14.99', 
+      category: 'BBQ & Karahi',
+      description: 'Marinated chicken pieces grilled in tandoor with authentic spices.',
+      image: 'https://images.unsplash.com/photo-1596075683259-48ce26b4b7d6?w=400&h=300&fit=crop' 
+    },
+    { 
+      name: 'Mutton Karahi', 
+      price: '$22.50', 
+      category: 'BBQ & Karahi',
+      description: 'Tender mutton cooked in karahi with ginger, garlic, and traditional spices.',
+      image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop' 
+    },
+    { 
+      name: 'Reshmi Kabab', 
+      price: '$13.99', 
+      category: 'BBQ & Karahi',
+      description: 'Soft and tender chicken kababs marinated in cream and spices.',
+      image: 'https://images.unsplash.com/photo-1562565392-e1d6269c4cd3?w=400&h=300&fit=crop' 
+    },
+    
+    // Desserts Category
+    { 
+      name: 'Gulab Jamun', 
+      price: '$6.50', 
+      category: 'Desserts',
+      description: 'Soft milk dumplings soaked in aromatic sugar syrup, served warm.',
+      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop' 
+    },
+    { 
+      name: 'Kheer', 
+      price: '$5.50', 
+      category: 'Desserts',
+      description: 'Traditional rice pudding cooked with milk, cardamom, and nuts.',
+      image: 'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=400&h=300&fit=crop' 
+    },
+    { 
+      name: 'Rasmalai', 
+      price: '$7.50', 
+      category: 'Desserts',
+      description: 'Soft cottage cheese dumplings in creamy milk flavored with cardamom.',
+      image: 'https://images.unsplash.com/photo-1622290291468-32d5a56fa18c?w=400&h=300&fit=crop' 
+    },
+    { 
+      name: 'Gajar Ka Halwa', 
+      price: '$6.99', 
+      category: 'Desserts',
+      description: 'Sweet carrot pudding cooked with milk, ghee, and nuts.',
+      image: 'https://images.unsplash.com/photo-1614707267539-bc269612d823?w=400&h=300&fit=crop' 
+    },
+    { 
+      name: 'Kulfi Falooda', 
+      price: '$8.50', 
+      category: 'Desserts',
+      description: 'Traditional Indian ice cream served with vermicelli and rose syrup.',
+      image: 'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=400&h=300&fit=crop' 
+    }
+  ];
+
+  // Filter menu items based on selected category
+  const filteredItems = selectedCategory === 'All' 
+    ? menuItems 
+    : menuItems.filter(item => item.category === selectedCategory);
   return (
     <div className="bg-background-light dark:bg-background-dark font-display text-[#0d1b13] dark:text-[#f8fcfa] antialiased overflow-x-hidden selection:bg-primary/30">
       <Header />
@@ -25,10 +147,10 @@ const Homepage = () => {
               <span className="material-symbols-outlined text-[20px]">shopping_bag</span>
               Order Online
             </Link>
-            <button className="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white px-8 py-3 rounded-lg text-base font-bold transition-all flex items-center gap-2">
+            <Link to="/book-table" className="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white px-8 py-3 rounded-lg text-base font-bold transition-all flex items-center gap-2">
               <span className="material-symbols-outlined text-[20px]">table_restaurant</span>
               Book a Table
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -82,19 +204,23 @@ const Homepage = () => {
             <span className="text-primary font-bold uppercase tracking-wider text-sm mb-2">Our Specialties</span>
             <h2 className="text-3xl md:text-4xl font-bold text-[#0d1b13] dark:text-white mb-6">Menu Highlights</h2>
             <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-8">
-              <button className="px-6 py-2 bg-primary text-[#0d1b13] rounded-full text-sm font-bold shadow-md hover:bg-primary/90 transition-colors">All</button>
-              <button className="px-6 py-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 rounded-full text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/10 transition-colors">Biryani & Rice</button>
-              <button className="px-6 py-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 rounded-full text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/10 transition-colors">BBQ & Karahi</button>
-              <button className="px-6 py-2 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 rounded-full text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/10 transition-colors">Desserts</button>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${
+                    selectedCategory === category
+                      ? 'bg-primary text-[#0d1b13] shadow-md hover:bg-primary/90'
+                      : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { name: 'Royal Chicken Biryani', price: '$14.99', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCJnQ4mqGe-dXM-wNRHn95ulljkvN2OSuTIb9b_a6ZO_egkdIVCuNy0IczXANMUlGMrlFIofP5rHdqm6pduLBVvj2m3IkrV-G9J1KaBCc69LC4fipmiVuiGhSkl_QFyVbvkz1fWzKoywIZKLpWWSx2W1Fkoh826IbDreEhqpWF2l1dpGnyu3iSiNu8SoQoKdXKgWBDeiaxpEbWMqMDtIpxc-sG7RREXinEpz0nFf6_YAyc-xWbIfYewZh-nSxL2rNm3z8zF2bVD_Zs' },
-              { name: 'Lahori Chicken Karahi', price: '$18.50', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAMDKMhkc81gKimi8tJQaVvx2rOmfsZHe-HXvCGomuhzdDGqVpaTJ5YsiFWaaoD0oHS0acV5xXgcisAhM6PQsVfrKm3RKQMU5s0SMrTdD4CXMMsarTGO794UD1lGCN2FALV48fFdEhmc8e8YppWG49HtyK0XaKTRzAbt23Lq9R9BNItWtS_MYqHJiokskOJfBzW1Wig0xIzNqjG46S7RUKEwwBcRZGYFVBUJtJISOUSL9FpHv1LQfR86q8X6DK4e2cSEmicnekeE14' },
-              { name: 'Beef Seekh Kabab', price: '$12.99', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBZX7kx-Jg3y_GuiUUt7p_q95In3tAq3QtROi9TSvpw4I4-XcDBhs_wk7nS7qQ1P7XF7S-GoGBDVMy3MxAjHsHfo-2kuDJ-bArgROdE6LEPJUdaMqblM7Vq_Nldo7qWBTsOxpEXczHLIg2Q5I_MP4Nk4JuzTI6DeH5xogoPc_xsvSS7TOApuinZLTeHQhs-Jcl5i8aIIH2zULZtyzlX9Cs_sCZrzTSVFKXNJgAhmxAlP_n0N1x5zq0UtH2qpHPULFgXXxRTU1TKmXQ' },
-              { name: 'Gulab Jamun', price: '$6.50', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB-9wo65CCnyFZkdua4PRRT8gYegbTax-gERtECS2ziV1X_U-WIOs7SmUZVjMkGduwBsh6d4Hadt4As8HaBd0qQuniT12WQ370-XPviaahfNm0ICSluU5EBhMT7HklRSkWnLueuQNiqv-raVZfAiCLRkN06Vb6GOUkSH1UDphGKPmXW3JrQvijvjbUN4786sD-H8uvOBQQIqLsubisbINwS-Yx53bg6E6MwCzhOguMtlRtZlNgAZhC27EM3-sj29oGsSAQDAWMr77U' },
-            ].map((item, idx) => (
+            {filteredItems.map((item, idx) => (
               <div key={idx} className="group bg-[#f8fcfa] dark:bg-[#152e21] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-primary/20">
                 <div className="h-48 overflow-hidden relative">
                   <div className="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style={{backgroundImage: `url('${item.image}')`}}></div>
@@ -106,7 +232,7 @@ const Homepage = () => {
                   <div className="flex justify-between items-start">
                     <h3 className="font-bold text-lg text-[#0d1b13] dark:text-white">{item.name}</h3>
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">Aromatic basmati rice cooked with tender chicken, saffron, and our secret spice blend.</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{item.description}</p>
                   <Link to="/menu" className="mt-auto w-full py-2 bg-white dark:bg-white/5 border border-primary text-primary hover:bg-primary hover:text-[#0d1b13] rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2">
                     Add to Order
                   </Link>

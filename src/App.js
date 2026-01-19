@@ -17,6 +17,7 @@ import OrderConfirmation from './pages/customer/OrderConfirmation';
 import OurStory from './pages/customer/OurStory';
 import Contact from './pages/customer/Contact';
 import BlogPost from './pages/customer/BlogPost';
+import BookTable from './pages/customer/BookTable';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -45,6 +46,7 @@ function App() {
         <Route path="/our-story" element={<OurStory />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/blog/:id" element={<BlogPost />} />
+        <Route path="/book-table" element={<BookTable />} />
 
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />

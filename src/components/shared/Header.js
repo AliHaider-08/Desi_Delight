@@ -15,6 +15,7 @@ const Header = ({ variant = 'default' }) => {
           <nav className="hidden md:flex items-center gap-8">
             <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">Home</Link>
             <Link to="/menu" className="text-sm font-medium hover:text-primary transition-colors">Menu</Link>
+            <Link to="/book-table" className="text-sm font-medium hover:text-primary transition-colors">Book Table</Link>
             <Link to="/blog/1" className="text-sm font-medium hover:text-primary transition-colors">Blog</Link>
             <Link to="/our-story" className="text-sm font-medium hover:text-primary transition-colors">Our Story</Link>
             <Link to="/contact" className="text-sm font-medium hover:text-primary transition-colors">Contact</Link>
