@@ -1,8 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import AdminRoute from './components/AdminRoute';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
+import AdminLogin from './pages/admin/AdminLogin';
 import MenuManagement from './pages/admin/MenuManagement';
 import OrderManagement from './pages/admin/OrderManagement';
 import UserManagement from './pages/admin/UserManagement';
@@ -28,32 +31,35 @@ import UserProfile from './pages/customer/UserProfile';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Admin Routes */}
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/menu" element={<MenuManagement />} />
-        <Route path="/admin/orders" element={<OrderManagement />} />
-        <Route path="/admin/users" element={<UserManagement />} />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/admin/menu" element={<AdminRoute><MenuManagement /></AdminRoute>} />
+          <Route path="/admin/orders" element={<AdminRoute><OrderManagement /></AdminRoute>} />
+          <Route path="/admin/users" element={<AdminRoute><UserManagement /></AdminRoute>} />
 
-        {/* Customer Routes */}
-        <Route path="/" element={<Homepage />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/menu/full" element={<FullMenu />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/order-confirmation" element={<OrderConfirmation />} />
-        <Route path="/our-story" element={<OurStory />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/blog/:id" element={<BlogPost />} />
-        <Route path="/book-table" element={<BookTable />} />
+          {/* Customer Routes */}
+          <Route path="/" element={<Homepage />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/menu/full" element={<FullMenu />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-confirmation" element={<OrderConfirmation />} />
+          <Route path="/our-story" element={<OurStory />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/blog/:id" element={<BlogPost />} />
+          <Route path="/book-table" element={<BookTable />} />
 
-        {/* Auth Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/profile" element={<UserProfile />} />
-      </Routes>
-    </Router>
+          {/* Auth Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/profile" element={<UserProfile />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

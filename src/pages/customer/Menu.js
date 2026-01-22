@@ -1,49 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../../components/shared/Header';
 import Footer from '../../components/shared/Footer';
+import { menuAPI } from '../../services/api';
 
 const Menu = () => {
   const [activeCategory, setActiveCategory] = useState('All Items');
   const [cart, setCart] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredItems, setFilteredItems] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   const categories = ['All Items', 'Biryani & Rice', 'BBQ & Karahi', 'Breads', 'Beverages'];
-  
-  const menuItems = [
-    // Biryani & Rice Category
-    { id: 1, name: 'Royal Chicken Biryani', price: '$14.99', category: 'Biryani & Rice', image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&h=300&fit=crop', rating: 4.8, description: 'Aromatic basmati rice cooked with tender chicken, saffron, and our secret spice blend.' },
-    { id: 2, name: 'Mutton Biryani', price: '$16.99', category: 'Biryani & Rice', image: 'https://images.unsplash.com/photo-1596797038534-9543c58d4940?w=400&h=300&fit=crop', rating: 4.7, description: 'Tender mutton pieces slow-cooked with fragrant basmati rice and traditional spices.' },
-    { id: 3, name: 'Vegetable Biryani', price: '$13.99', category: 'Biryani & Rice', image: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400&h=300&fit=crop', rating: 4.5, description: 'Fragrant basmati rice with mixed vegetables and aromatic spices.' },
-    { id: 4, name: 'Chicken Pulao', price: '$12.99', category: 'Biryani & Rice', image: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=400&h=300&fit=crop', rating: 4.6, description: 'Light and flavorful rice dish with tender chicken and aromatic spices.' },
-    { id: 5, name: 'Beef Yakhni Pulao', price: '$15.50', category: 'Biryani & Rice', image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=400&h=300&fit=crop', rating: 4.9, description: 'Long grain rice cooked in rich beef bone broth with whole spices and fried onions.' },
-    { id: 6, name: 'Zeera Rice', price: '$8.99', category: 'Biryani & Rice', image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=400&h=300&fit=crop', rating: 4.3, description: 'Basmati rice flavored with cumin seeds and aromatic herbs.' },
 
-    // BBQ & Karahi Category
-    { id: 7, name: 'Chicken Tikka', price: '$14.99', category: 'BBQ & Karahi', image: 'https://images.unsplash.com/photo-1596075683259-48ce26b4b7d6?w=400&h=300&fit=crop', rating: 4.8, spicy: true, description: 'Marinated chicken pieces grilled in tandoor with authentic spices.' },
-    { id: 8, name: 'Beef Seekh Kabab', price: '$12.99', category: 'BBQ & Karahi', image: 'https://images.unsplash.com/photo-1546833999-b9f581aeb6cd?w=400&h=300&fit=crop', rating: 4.6, spicy: true, description: 'Minced beef skewers grilled to perfection with aromatic spices and herbs.' },
-    { id: 9, name: 'Lahori Chicken Karahi', price: '$18.50', category: 'BBQ & Karahi', image: 'https://images.unsplash.com/photo-1589020647302-a2eac6c9c7e2?w=400&h=300&fit=crop', rating: 4.9, spicy: true, description: 'Tender chicken cooked in traditional karahi with authentic spices and fresh herbs.' },
-    { id: 10, name: 'Mutton Karahi', price: '$22.50', category: 'BBQ & Karahi', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop', rating: 4.7, spicy: true, description: 'Tender mutton cooked in karahi with ginger, garlic, and traditional spices.' },
-    { id: 11, name: 'Reshmi Kabab', price: '$13.99', category: 'BBQ & Karahi', image: 'https://images.unsplash.com/photo-1562565392-e1d6269c4cd3?w=400&h=300&fit=crop', rating: 4.5, description: 'Soft and tender chicken kababs marinated in cream and spices.' },
-    { id: 12, name: 'Chicken Malai Boti', price: '$15.99', category: 'BBQ & Karahi', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop', rating: 4.8, description: 'Creamy and tender chicken pieces marinated in yogurt and cream.' },
+  // Fetch menu items from API
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        setLoading(true);
+        const response = await menuAPI.getMenuItems();
+        setMenuItems(response.data);
+      } catch (err) {
+        setError('Failed to load menu items');
+        console.error('Error fetching menu items:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // Breads Category
-    { id: 13, name: 'Butter Naan', price: '$2.99', category: 'Breads', image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop', rating: 4.7, description: 'Soft and fluffy bread brushed with melted butter.' },
-    { id: 14, name: 'Garlic Naan', price: '$3.49', category: 'Breads', image: 'https://images.unsplash.com/photo-1586447249103-61585e2a62c0?w=400&h=300&fit=crop', rating: 4.6, description: 'Traditional naan topped with fresh garlic and herbs.' },
-    { id: 15, name: 'Tandoori Roti', price: '$1.99', category: 'Breads', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c7?w=400&h=300&fit=crop', rating: 4.5, description: 'Whole wheat bread cooked in traditional tandoor.' },
-    { id: 16, name: 'Paratha', price: '$2.49', category: 'Breads', image: 'https://images.unsplash.com/photo-1586447249103-61585e2a62c0?w=400&h=300&fit=crop', rating: 4.8, description: 'Flaky layered bread cooked with ghee on griddle.' },
-    { id: 17, name: 'Puri', price: '$3.99', category: 'Breads', image: 'https://images.unsplash.com/photo-1586447249103-61585e2a62c0?w=400&h=300&fit=crop', rating: 4.4, description: 'Deep-fried puffed bread, perfect with curries.' },
-    { id: 18, name: 'Chapati', price: '$1.49', category: 'Breads', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c7?w=400&h=300&fit=crop', rating: 4.3, description: 'Simple whole wheat flatbread, healthy and light.' },
-
-    // Beverages Category
-    { id: 19, name: 'Mango Lassi', price: '$4.99', category: 'Beverages', image: 'https://images.unsplash.com/photo-15532797688-e658cf5f8a31?w=400&h=300&fit=crop', rating: 4.9, description: 'Sweet and creamy yogurt drink with fresh mango pulp.' },
-    { id: 20, name: 'Salted Lassi', price: '$3.99', category: 'Beverages', image: 'https://images.unsplash.com/photo-15532797688-e658cf5f8a31?w=400&h=300&fit=crop', rating: 4.6, description: 'Refreshing salty yogurt drink perfect with spicy food.' },
-    { id: 21, name: 'Fresh Lime Soda', price: '$2.99', category: 'Beverages', image: 'https://images.unsplash.com/photo-1600271886742-f0496045f8d3?w=400&h=300&fit=crop', rating: 4.5, description: 'Fresh lime juice with soda and mint leaves.' },
-    { id: 22, name: 'Mint Lemonade', price: '$3.49', category: 'Beverages', image: 'https://images.unsplash.com/photo-1600271886742-f0496045f8d3?w=400&h=300&fit=crop', rating: 4.7, description: 'Cooling blend of fresh mint and lemon.' },
-    { id: 23, name: 'Rose Milk', price: '$4.49', category: 'Beverages', image: 'https://images.unsplash.com/photo-15532797688-e658cf5f8a31?w=400&h=300&fit=crop', rating: 4.8, description: 'Sweet milk flavored with aromatic rose syrup.' },
-    { id: 24, name: 'Sugarcane Juice', price: '$3.99', category: 'Beverages', image: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop', rating: 4.6, description: 'Freshly pressed sugarcane juice with lemon and ginger.' }
-  ];
+    fetchMenuItems();
+  }, []);
 
   const addToCart = (item) => {
     setCart([...cart, item]);
@@ -186,69 +174,94 @@ const Menu = () => {
                 </span>
               )}
             </h3>
-            {filteredItems.length === 0 ? (
+            
+            {loading && (
               <div className="text-center py-12">
-                <span className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-4 animate-bounce">search_off</span>
-                <p className="text-gray-500 dark:text-gray-400 text-lg">
-                  No items found for "{searchQuery}"
-                </p>
-                <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
-                  Try searching for different keywords or browse categories
-                </p>
+                <span className="material-symbols-outlined text-6xl text-primary animate-spin mb-4">refresh</span>
+                <p className="text-gray-500 dark:text-gray-400 text-lg">Loading menu items...</p>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredItems.map((item) => (
-                  <div key={item.id} className="group flex flex-col overflow-hidden rounded-xl bg-surface-light dark:bg-surface-dark border border-[#e7f3ec] dark:border-[#1e3a2b] shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                    {/* Enhanced Image Container */}
-                    <div className="h-48 w-full bg-gray-200 overflow-hidden relative">
-                      {/* Gradient Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                      
-                      {/* Rating Badge */}
-                      {item.rating && (
-                        <div className="absolute top-3 right-3 bg-white/95 dark:bg-black/90 backdrop-blur px-2 py-1 rounded-full text-xs font-bold text-[#0d1b13] dark:text-white flex items-center gap-1 shadow-lg border border-primary/20">
-                          <span className="material-symbols-outlined text-amber-500 text-sm">star</span> {item.rating}
-                        </div>
-                      )}
-                      
-                      {/* Spicy Badge */}
-                      {item.spicy && (
-                        <div className="absolute top-3 left-3 bg-red-500/95 backdrop-blur px-2 py-1 rounded-full text-xs font-bold text-white flex items-center gap-1 shadow-lg animate-pulse">
-                          <span className="material-symbols-outlined text-sm">local_fire_department</span> Spicy
-                        </div>
-                      )}
-                      
-                      {/* New Badge */}
-                      {item.id <= 6 && (
-                        <div className="absolute top-3 left-1/2 transform -translate-x-1/2 bg-accent-gold text-[#0d1b13] px-3 py-1 rounded-full text-xs font-bold shadow-lg animate-bounce">
-                          NEW
-                        </div>
-                      )}
-                      
-                      <img alt={item.name} className="h-full w-full object-cover transition-all duration-500 group-hover:scale-110" src={item.image} />
-                    </div>
-                    
-                    {/* Enhanced Content */}
-                    <div className="p-4 flex flex-col flex-grow relative">
-                      {/* Decorative Element */}
-                      <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full"></div>
-                      
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="text-lg font-bold text-[#0d1b13] dark:text-white group-hover:text-primary transition-colors">{item.name}</h4>
-                        <span className="text-lg font-bold text-primary bg-primary/10 px-2 py-1 rounded-lg">{item.price}</span>
-                      </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4 flex-grow">{item.description}</p>
-                      
-                      {/* Enhanced Add to Cart Button */}
-                      <button onClick={() => addToCart(item)} className="w-full mt-auto flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-primary/10 to-accent-gold/10 border border-primary/30 py-2.5 text-sm font-bold text-primary hover:from-primary hover:to-accent-gold hover:text-[#0d1b13] transition-all duration-300 transform hover:scale-105">
-                        <span className="material-symbols-outlined text-lg">add_shopping_cart</span>
-                        Add to Cart
-                      </button>
-                    </div>
+            )}
+            
+            {error && (
+              <div className="text-center py-12">
+                <span className="material-symbols-outlined text-6xl text-red-500 mb-4">error</span>
+                <p className="text-red-500 text-lg mb-4">{error}</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90 transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            )}
+            
+            {!loading && !error && (
+              <>
+                {filteredItems.length === 0 ? (
+                  <div className="text-center py-12">
+                    <span className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-4 animate-bounce">search_off</span>
+                    <p className="text-gray-500 dark:text-gray-400 text-lg">
+                      No items found for "{searchQuery}"
+                    </p>
+                    <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
+                      Try searching for different keywords or browse categories
+                    </p>
                   </div>
-                ))}
-              </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {filteredItems.map((item) => (
+                      <div key={item.id} className="group flex flex-col overflow-hidden rounded-xl bg-surface-light dark:bg-surface-dark border border-[#e7f3ec] dark:border-[#1e3a2b] shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                        {/* Enhanced Image Container */}
+                        <div className="h-48 w-full bg-gray-200 overflow-hidden relative">
+                          {/* Gradient Overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                          
+                          {/* Rating Badge */}
+                          {item.rating && (
+                            <div className="absolute top-3 right-3 bg-white/95 dark:bg-black/90 backdrop-blur px-2 py-1 rounded-full text-xs font-bold text-[#0d1b13] dark:text-white flex items-center gap-1 shadow-lg border border-primary/20">
+                              <span className="material-symbols-outlined text-amber-500 text-sm">star</span> {item.rating}
+                            </div>
+                          )}
+                          
+                          {/* Spicy Badge */}
+                          {item.spicy && (
+                            <div className="absolute top-3 left-3 bg-red-500/95 backdrop-blur px-2 py-1 rounded-full text-xs font-bold text-white flex items-center gap-1 shadow-lg animate-pulse">
+                              <span className="material-symbols-outlined text-sm">local_fire_department</span> Spicy
+                            </div>
+                          )}
+                          
+                          {/* New Badge */}
+                          {item.id <= 6 && (
+                            <div className="absolute top-3 left-1/2 transform -translate-x-1/2 bg-accent-gold text-[#0d1b13] px-3 py-1 rounded-full text-xs font-bold shadow-lg animate-bounce">
+                              NEW
+                            </div>
+                          )}
+                          
+                          <img alt={item.name} className="h-full w-full object-cover transition-all duration-500 group-hover:scale-110" src={item.image} />
+                        </div>
+                        
+                        {/* Enhanced Content */}
+                        <div className="p-4 flex flex-col flex-grow relative">
+                          {/* Decorative Element */}
+                          <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full"></div>
+                          
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="text-lg font-bold text-[#0d1b13] dark:text-white group-hover:text-primary transition-colors">{item.name}</h4>
+                            <span className="text-lg font-bold text-primary bg-primary/10 px-2 py-1 rounded-lg">{item.price}</span>
+                          </div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4 flex-grow">{item.description}</p>
+                          
+                          {/* Enhanced Add to Cart Button */}
+                          <button onClick={() => addToCart(item)} className="w-full mt-auto flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-primary/10 to-accent-gold/10 border border-primary/30 py-2.5 text-sm font-bold text-primary hover:from-primary hover:to-accent-gold hover:text-[#0d1b13] transition-all duration-300 transform hover:scale-105">
+                            <span className="material-symbols-outlined text-lg">add_shopping_cart</span>
+                            Add to Cart
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const { register } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -18,6 +24,67 @@ const SignUp = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+  };
+
+  const validateForm = () => {
+    console.log('Form data:', formData);
+    
+    if (!formData.fullName.trim()) {
+      setError('Full name is required');
+      return false;
+    }
+    if (!formData.email.trim()) {
+      setError('Email is required');
+      return false;
+    }
+    if (!formData.password) {
+      setError('Password is required');
+      return false;
+    }
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return false;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return false;
+    }
+    if (!formData.agreeToTerms) {
+      setError('You must agree to the terms and conditions');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    
+    if (!validateForm()) return;
+
+    setLoading(true);
+    try {
+      const userData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password
+      };
+      
+      console.log('Sending user data:', userData);
+      
+      const result = await register(userData);
+      
+      if (result.success) {
+        setSuccess(true);
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
+        setError(result.message);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,8 +126,18 @@ const SignUp = () => {
             <div className="mb-8">
               <h1 className="text-text-main dark:text-white text-3xl font-black leading-tight tracking-[-0.033em] mb-2">Create Account</h1>
               <p className="text-text-muted dark:text-gray-400 text-base font-normal">Please enter your details to sign up.</p>
+              {error && (
+                <div className="mt-4 p-3 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-lg">
+                  <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
+                </div>
+              )}
+              {success && (
+                <div className="mt-4 p-3 bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-700 rounded-lg">
+                  <p className="text-green-700 dark:text-green-300 text-sm">Registration successful! Redirecting to login...</p>
+                </div>
+              )}
             </div>
-            <form className="flex flex-col gap-5">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <label className="flex flex-col gap-1.5">
                 <span className="text-text-main dark:text-gray-200 text-sm font-bold">Full Name</span>
                 <div className="relative">
@@ -145,8 +222,19 @@ const SignUp = () => {
                   I agree to the <Link to="/terms" className="text-primary font-medium hover:underline">Terms & Conditions</Link> and <Link to="/privacy" className="text-primary font-medium hover:underline">Privacy Policy</Link>.
                 </span>
               </label>
-              <button className="mt-2 flex w-full cursor-pointer items-center justify-center rounded-lg h-12 px-5 bg-primary hover:bg-green-500 text-[#0d1b13] text-base font-bold leading-normal tracking-[0.015em] transition-all shadow-sm hover:shadow-md" type="submit">
-                Sign Up
+              <button 
+                className="mt-2 flex w-full cursor-pointer items-center justify-center rounded-lg h-12 px-5 bg-primary hover:bg-green-500 text-[#0d1b13] text-base font-bold leading-normal tracking-[0.015em] transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed" 
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="material-symbols-outlined animate-spin">refresh</span>
+                    Creating Account...
+                  </span>
+                ) : (
+                  'Sign Up'
+                )}
               </button>
             </form>
             <div className="relative flex py-6 items-center">

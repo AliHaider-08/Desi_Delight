@@ -1,10 +1,31 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    const result = await login(email, password);
+    
+    if (result.success) {
+      navigate('/');
+    } else {
+      setError(result.message);
+    }
+    
+    setLoading(false);
+  };
 
   return (
     <div className="bg-background-light dark:bg-background-dark font-display text-text-main flex flex-col min-h-screen">
@@ -46,8 +67,13 @@ const Login = () => {
               <p className="text-text-subtle text-base font-normal leading-normal">
                 Please login to access your account and order delicious meals.
               </p>
+              {error && (
+                <div className="mt-4 p-3 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-lg">
+                  <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
+                </div>
+              )}
             </div>
-            <form className="flex flex-col gap-5">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <label className="flex flex-col">
                 <p className="text-text-main dark:text-gray-200 text-base font-medium leading-normal pb-2">Email</p>
                 <input 
@@ -82,8 +108,19 @@ const Login = () => {
               <div className="flex justify-end mt-[-10px]">
                 <Link to="/forgot-password" className="text-text-subtle text-sm font-medium hover:text-primary hover:underline transition-colors">Forgot Password?</Link>
               </div>
-              <button className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-4 bg-primary text-text-main text-base font-bold leading-normal tracking-[0.015em] hover:shadow-lg hover:bg-opacity-90 transition-all mt-2" type="submit">
-                <span className="truncate">Log In</span>
+              <button 
+                className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-4 bg-primary text-text-main text-base font-bold leading-normal tracking-[0.015em] hover:shadow-lg hover:bg-opacity-90 transition-all mt-2" 
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="material-symbols-outlined animate-spin">refresh</span>
+                    Logging in...
+                  </span>
+                ) : (
+                  <span className="truncate">Log In</span>
+                )}
               </button>
             </form>
             <div className="relative flex py-8 items-center">
